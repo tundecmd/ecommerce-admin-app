@@ -63,3 +63,12 @@ export const isUserLoggedIn = () => {
 // } else {
 //     dispatch({ payload: { authenticate: false, message: 'user not logged in' } });
 // }
+
+export const Signout = () => {
+    return async dispatch => {
+        localStorage.clear();
+        dispatch({
+            type: authConstants.LOGOUT_REQUEST
+        })
+    }
+}

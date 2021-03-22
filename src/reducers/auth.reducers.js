@@ -21,7 +21,6 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 authenticating: true
             }
-
         case authConstants.LOGIN_SUCCESS:
             return state = {
                 ...state,
@@ -30,11 +29,13 @@ const authReducer = (state = initState, action) => {
                 authenticate: true,
                 authenticating: false
             }
-            
-    default:
-        return state
-        
-    }
+        case authConstants.LOGOUT_REQUEST:
+            return state = {
+                ...initState
+            }
+        default:
+            return state
+        }
 }
 
 export default authReducer;
