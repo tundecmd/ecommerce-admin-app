@@ -4,6 +4,9 @@ const initState = {
     token: '',
     authenticate: false,
     authenticating: false,
+    loading: false,
+    error: null,
+    message: '',
     user: { 
         firstName: '',
         lastName: '',
@@ -31,7 +34,18 @@ const authReducer = (state = initState, action) => {
             }
         case authConstants.LOGOUT_REQUEST:
             return state = {
+                ...state,
+                loading: true
+            }
+        case authConstants.LOGOUT_SUCCESS:
+            return state = {
                 ...initState
+            }
+        case authConstants.LOGOUT_FAILURE:
+            return state = {
+                ...state,
+                error: action.payload.error,
+                loading: false
             }
         default:
             return state
