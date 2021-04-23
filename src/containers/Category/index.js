@@ -103,7 +103,7 @@ const Category = (props) => {
                     placeholder={`Category Name`}
                     onChange={(e) => setCategoryName(e.target.value)}
                 />
-                <select className="form-control" onChange={e => setParentCategoryId(e.target.value)}>
+                <select className="form-control" value={parentCategoryId} onChange={e => setParentCategoryId(e.target.value)}>
                     <option>select category</option>
                     {
                         createCategoryList(category.categories).map(option => 
