@@ -9,8 +9,9 @@ import { Col, Container, Row, Button, Modal  } from 'react-bootstrap'
 const NewModal = (props) => {
   return(
         <Modal 
+            size={props.size}
             show={props.show} 
-            handleClose={props.handleClose}
+            onHide={props.handleClose}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{props.modalTitle}</Modal.Title>
@@ -24,7 +25,7 @@ const NewModal = (props) => {
                 </Button>
             </Modal.Footer>
         </Modal>
-   )
+    )
 }
 
 export default NewModal

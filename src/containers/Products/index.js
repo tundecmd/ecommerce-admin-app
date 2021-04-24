@@ -4,8 +4,10 @@ import { addCategory, getAllCategory } from '../../actions/category.action'
 import Layout from '../../components/Layouts'
 import Input from '../../components/UI/input'
 import Modal from '../../components/UI/Modal'
-import { useDispatch, useSelector } from 'react-redux';
-import { addProduct } from '../../actions/product.action'
+import { useDispatch, useSelector } from 'react-redux'
+import { addProduct } from '../../actions'
+import "./styles.css"
+import { generatePublicUrl } from '../../urlConfig'
 
 /**
 * @author
@@ -19,9 +21,11 @@ const Products = (props) => {
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
   const [productPictures, setProductPictures] = useState([]);
-  const category = useSelector(state => state.category);
+  const [productDetailModal, setProductDetailModal] = useState(false);
+  const [productDetails, setProductDetails] = useState(null);
   const dispatch = useDispatch();
-  const product = useSelector(state => state.product)
+  const category = useSelector(state => state.category);
+  const product = useSelector(state => state.product);
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -64,52 +68,37 @@ const Products = (props) => {
   console.log(`productPictures`, productPictures)
   const renderProducts = () => {
     return (
-      <Table responsive="sm">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Description</th>
-        <th>Category</th>
-      </tr>
-    </thead>
-    <tbody>
-      {console.log(`product`, product.products.category && product.products.category.name)}
-      {
-        product.products.length > 0 ? 
-        product.products.map(product => 
+      <Table style={{ fontSize: 12 }} responsive="sm">
+        <thead>
           <tr>
-            <td>1</td>
-            <td>{product.name}</td>
-            <td>{product.price}</td>
-            <td>{product.quantity}</td>
-            <td>{product.description}</td>
-            <td>{product.category ? product.category.name : 'null'}</td>
+            <th>#</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Category</th>
           </tr>
-        ) : null
-      }
-    </tbody>
-  </Table>
+        </thead>
+        <tbody>
+          {console.log(`product`, product.products.category && product.products.category.name)}
+          {
+            product.products.length > 0 ? 
+            product.products.map(product => 
+              <tr onClick={() => showProductDetailsModal(product)} key={product._id}>
+                <td>1</td>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>{product.quantity}</td>
+                <td>{product.category ? product.category.name : `${product.name}`}</td>
+              </tr>
+            ) : null
+          }
+        </tbody>
+      </Table>
     )
   }
-  return(
-    <Layout sidebar>
-        <Container>
-          <Row>
-            <Col md={12} className="d-flex justify-content-between">
-              <h3>Product</h3>
-              <button onClick={handleShow}>Add</button>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-            { renderProducts() }
-            </Col>
-          </Row>
-        </Container>
-        <Modal 
+  const renderAddProductModal = () => {
+    return (
+      <Modal 
           show={show} 
           handleClose={handleClose}
           modalTitle={`Add New Product`}
@@ -150,7 +139,90 @@ const Products = (props) => {
             }
 
             <input type="file" name="productPictures" onChange={handleProductPictures} />
-        </Modal>
+      </Modal>
+    )
+  }
+
+  const handleCloseProductDetailsModal = () => {
+    setProductDetailModal(false)
+  }
+  const showProductDetailsModal = product => {
+    setProductDetails(product)
+    setProductDetailModal(true)
+    console.log(`product`, product)
+  }
+
+  const renderProductDetailsModal = () => {
+
+    if (!productDetails) {
+      return null;
+    }
+
+    return (
+      <Modal
+        show={productDetailModal}
+        handleClose={handleCloseProductDetailsModal}
+        modalTitle={`Product Details`}
+        size="lg"
+      >
+        <Row>
+          <Col md="6">
+            <label className="key">Name</label>
+            <p className="value">{productDetails.name}</p>
+          </Col>
+          <Col md="6">
+            <label className="key">Price</label>
+            <p className="value">{productDetails.price}</p>
+          </Col>
+          <Col md="6">
+            <label className="key">Quantity</label>
+            <p className="value">{productDetails.quantity}</p>
+          </Col>
+          <Col md="6">
+            <label className="key">Category</label>
+            <p className="value">{productDetails.category ? productDetails.category.name : '--'}</p>
+          </Col>
+        </Row>    
+        <Row>
+        <Col md="12">
+          <label className="key">Category</label>
+          <p className="value">{productDetails.description ? productDetails.description : '--'}</p>
+          </Col>
+        </Row>    
+        <Row>
+          <Col >
+            <label className="key">Product Pictures</label>
+            <div className="d-flex">
+              {
+                productDetails.productPictures.map(picture => 
+                  <div className="productImgContainer">
+                    <img src={generatePublicUrl(picture.img)} />
+                  </div>)
+              }
+            </div>
+            
+          </Col>
+        </Row>
+      </Modal>
+    )
+  }
+  return(
+    <Layout sidebar>
+        <Container>"
+          <Row>
+            <Col md={12} className="d-flex justify-content-between">
+              <h3>Product</h3>
+              <button onClick={handleShow}>Add</button>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+            { renderProducts() }
+            </Col>
+          </Row>
+        </Container>
+        { renderAddProductModal() }
+        { renderProductDetailsModal() }
     </Layout>
   )
 }
