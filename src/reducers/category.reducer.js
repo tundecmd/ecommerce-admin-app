@@ -19,20 +19,21 @@ const buildNewCategories = (parentId, categories, category) => {
                 children: []
             }
         ]
-    }
+    } 
 
     for (let cat of categories) {
 
         if (cat._id == parentId) {
+            const newCategory = {
+                _id: category._id,
+                name: category.name,
+                slug: category.slug,
+                parentId: category.parentId,
+                children: []
+            };
             myCategories.push({
                 ...cat,
-                children: cat.children ? buildNewCategories(parentId, [...cat.children, {
-                    _id: category._id,
-                    name: category.name,
-                    slug: category.slug,
-                    parentId: category.parentId,
-                    children: category.children
-                }], category) : []
+                children: cat.children.length > 0 ? [...cat.children, newCategory] : [newCategory] 
             })
         } else {
             myCategories.push({
@@ -40,7 +41,6 @@ const buildNewCategories = (parentId, categories, category) => {
                 children: cat.children ? buildNewCategories(parentId, cat.children, category) : []
             })
         }
-        
     }
     return myCategories;
 }
@@ -80,6 +80,5 @@ export default (state = initState, action) => {
         default:
             break;
     }
-
     return state;
 }
