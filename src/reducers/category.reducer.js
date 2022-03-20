@@ -16,6 +16,7 @@ const buildNewCategories = (parentId, categories, category) => {
                 _id: category._id,
                 name: category.name,
                 slug: category.slug,
+                type: category.type,
                 children: []
             }
         ]
@@ -29,6 +30,7 @@ const buildNewCategories = (parentId, categories, category) => {
                 name: category.name,
                 slug: category.slug,
                 parentId: category.parentId,
+                type: category.type,
                 children: []
             };
             myCategories.push({
@@ -45,13 +47,12 @@ const buildNewCategories = (parentId, categories, category) => {
     return myCategories;
 }
 
-export default (state = initState, action) => {
+export default function categoryReducer (state = initState, action) {
     switch (action.type) {
         case categoryConstants.GET_ALL_CATEGORIES_SUCCESS:
             state = {
                 ...state,
-                categories: action.payload.categories,
-
+                categories: action.payload.categories
             }
             break;
         case categoryConstants.ADD_NEW_CATEGORY_REQUEST:
@@ -75,10 +76,46 @@ export default (state = initState, action) => {
                 ...initState
             }
             break;
-        
-    
-        default:
+        case categoryConstants.UPDATE_CATEGORY_REQUEST:
+            state = {
+                ...state,
+                loading: true
+            }
             break;
-    }
+        case categoryConstants.UPDATE_CATEGORY_SUCCESS:
+            state = {
+                ...state,
+                loading: false
+            }
+            break;
+        case categoryConstants.UPDATE_CATEGORY_FAILURE:
+            state = {
+                ...state,
+                loading: false,
+                error: action.payload.error
+            }
+            break;
+        case categoryConstants.DELETE_CATEGORY_REQUEST:
+            state = {
+                ...state,
+                loading: true
+            }
+            break;
+        case categoryConstants.DELETE_CATEGORY_SUCCESS:
+            state = {
+                ...state,
+                loading: false
+            }
+            break;
+        case categoryConstants.DELETE_CATEGORY_FAILURE:
+            state = {
+                ...state,
+                loading: false,
+                error: action.payload.error
+            }
+            break;
+            default:
+                return state;
+        }
     return state;
 }

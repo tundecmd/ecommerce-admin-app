@@ -23,13 +23,23 @@ const NewModal = (props) => {
                 {
                     props.buttons ? props.buttons.map((btn, index) => {
                         return  (
-                            <Button key={index} variant="primary" onClick={btn.onClick}>
+                            <Button 
+                                key={index} 
+                                variant={btn.color} 
+                                onClick={btn.onClick}
+                            >
                                 {btn.label}
                             </Button>
                         )
                     }) :  
-                        <Button variant="primary" onClick={props.handleClose}>
-                            Save Changes
+                        <Button 
+                            variant="primary" 
+                            className="btn-sm"
+                            style={{ backgroundColor: '#333' }} 
+                            onClick={props.onSubmit} 
+                            {...props}
+                        >
+                            Save
                         </Button>
                 }
                
