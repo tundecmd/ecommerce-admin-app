@@ -14,18 +14,31 @@ const NewPage = () => {
   const category = useSelector(state => state.category);
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState('');
-  const [description, setdescription] = useState('');
+  const [description, setDescription] = useState('');
   const [banners, setBanners] = useState([]);
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
+  const page = useSelector(state => state.page);
 
   useEffect(() => {
     setCategories(linearCategories(category.categories));
   }, [category]);
 
+  useEffect(() => {
+    console.log(page)
+    if (!page.loading) {
+      setCreateModal(false);
+      setTitle('');
+      setCategoryId('');
+      setDescription('');
+      setProducts([]);
+      setBanners([]);
+    }
+  }, [page]);
+
   const onCategoryChange = e => {
     // console.log('categories', categories);
-    const category = categories.find(category => category._id == e.target.value);
+    const category = categories.find(category => category.value == e.target.value);
     setCategoryId(e.target.value); 
     setType(category.type);
   };
@@ -50,20 +63,20 @@ const NewPage = () => {
     }
 
     const form = new FormData();
-    form.append('title', title);
-    form.append('description', description);
-    form.append('category', categoryId);
-    form.append('type', type);
-    banners.forEach((banner, index) => {
-      form.append('banners', banner);
-    });
-    products.forEach((product, index) => {
-      form.append('products', product);
-    });
+      form.append('title', title);
+      form.append('description', description);
+      form.append('category', categoryId);
+      form.append('type', type);
+      banners.forEach((banner, index) => {
+        form.append('banners', banner);
+      });
+      products.forEach((product, index) => {
+        form.append('products', product);
+      });
 
-    dispatch(createPage(form));
+      dispatch(createPage(form));
 
-    console.log({title, categories, categoryId, products, banners, type, description});
+      console.log({title, categories, categoryId, products, banners, type, description});
   };
 
   const renderCreatePageModal = () => {
@@ -71,11 +84,12 @@ const NewPage = () => {
       <Modal
         show={createModal}
         modalTitle={'Create New Page'}
-        handleClose={submitPageForm}
+        handleClose={() => setCreateModal(false)}
+        onSubmit={submitPageForm}
       >
         <Container>
           <Row>
-            <Col>
+            {/* <Col>
               <select
                 className='form-control form-control-sm'
                 value={categoryId}
@@ -88,7 +102,14 @@ const NewPage = () => {
                   )
                 }
               </select>
-            </Col>
+            </Col> */}
+            <Input 
+              type="select"
+              value={categoryId}
+              onChange={onCategoryChange}
+              options={categories}
+              placeholder={'Select Category'}
+            />
           </Row>
           <br />
           <Row>
@@ -105,7 +126,7 @@ const NewPage = () => {
             <Col>
               <Input
                 value={description}
-                onChange={(e) => setdescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder={'Page description'}
                 className="form-control-sm"
               />
@@ -154,8 +175,16 @@ const NewPage = () => {
   };
   return (
     <Layout sidebar>
-      { renderCreatePageModal() }
-      <button onClick={() => setCreateModal(true)}>Create Page</button>
+      {
+        page.loading ? 
+          <p>Creating page ... please wait</p>
+          : 
+          <>
+             { renderCreatePageModal() }
+              <button onClick={() => setCreateModal(true)}>Create Page</button>
+          </>
+      }
+     
     </Layout>
   )
 }
