@@ -3,7 +3,7 @@ import React from 'react';
 const linearCategories = (categories, options=[]) => {
   for (let category of categories) {
       options.push({
-        id: category._id,
+        _id: category._id,
         name: category.name,
         parentId: category.parentId,
         type: category.type
